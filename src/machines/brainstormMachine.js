@@ -7,7 +7,7 @@ let eventsShelf = [];
 const existingArgsIds = [];
 
 export const brainstormMachine = createMachine({
-    /** @xstate-layout N4IgpgJg5mDOIC5QCMBOBDAlgO1gFwHtUBbAOh3QGM9MA3MAYgGUAVAQQCUWBtABgF1EoAA4FYmGgWxCQAD0QBGAKwBmUgCZeKhQoBsATl779K9QBYANCACeifbrUB2ABxLdS9YbMLHPgL5+VmhYuIQkpFQ09AwAYgCSAHJxTAASfIJIIKLiktKZ8gj6LqSOvAYquo5KzmaGKla2hfrqGq667fYKZuouAUEYOPhEZJF0YKRg9Nh4sADiYNhgGDTYUAwcAKIAwhtxAGobAPobBwksTOky2RKYUjIFSkoKpNrOKryOjupKjrpmug1EKUlCUFLwFOpnM4FKZHuo+iBgoMwiNqGNSDRiEsGCw4lsANKXTLXXL3RDQ5ykZTqcxVMyqapKQEIVyUlSwlSPapQz4IpGhYYRNH0DGYLGoBhEkRiG53fJ2YqlcqVaq1LTM-RmSmQtwqIoedTveGBREDAXhUYi4SoAhQVBwcSrZgbBIAEUOnFmAFUALIungCK4y0nyhC1Fr-XjqZTuLymeo2RDmXSkXRaVxKXi8MyfaFKPlmoYW4Xja22+2wR1rPYAeRYGylWWDtzyoAKvzML3BWdUCmc5l4TMTCENz30ec+kYMjn0BZCRdRUVLNrtDpwUFIAHcsCs1mxXe7Pb7-Y2SS2yWGPBofv2vrVPprLMO3C1nDPvGVM+5dMb+vOUUKS6kGWq6VuuW6oDcqxsKgUAAK5YtMzosB6HDen6Zyns2cptkCXRUpCzhptG0ZGsy-xqN0P6GM01Q6PmJr8gugHoiBFZVhBUFQDB8GIXgzAsDWAAKHoHoksyoehJ6BsS2GtnIiD0i03wuD05hFO+T6NE8LQqO+n6eLozgmAEJrYAQEBwDITEokGOTnqGAC0ALPim47KI4FRlAo+h9o4c7IoKFAlnZsryQU3Qan8rRuB4Xg+P4jGFgBlpgKFIa4SOZidloEJ0X87Q-MyXSdlqHmPOy2W1AF5qLuikwLDM8yLMs67pQ5mXaLwpC5d80IFe4jjMr8lI+DmeowmmBo1cxqWiuK7U4QpCBdT12h9Xo-yDRqPwlG0WrsoOOa-qa-6CnNbFrqsi3hUmzRrXl-VbUVw56SCzQ-lCxgZjUDF-oFxZAZdYGrFuO5tbJ9lLQUKhmN1vX5c9Q3PkonaGbwzjgv2qiDjNKUlsBK7seBm6QbuPEIY1N0Xr4IKPP8tSmPoHjOMybidm+mqvDo46mHjgoAGY4JgsAABaQNToaVMV7wgjq7TKOOvzfKZfhAA */
+    /** @xstate-layout N4IgpgJg5mDOIC5QCMBOBDAlgO1gFwHtUBbAOh3QGM9MA3MAYgGUAVAQQCUWBtABgF1EoAA4FYmGgWxCQAD0QBGAKwBmUgCZeKhQoBsATl779K9QBYANCACeifbrUB2ABxLdS9YbMLHPgL5+VmhYuIQkpFQ09AwAYgCSAHJxTAASfIJIIKLiktKZ8gj6LqSOvAYquo5KzmaGKla2hfrqGq667fYKZuouAUEYOPhEZJF0YKRg9Nh4sADiYNhgGDTYUAwcAKIAwhtxAGobAPobBwksTOky2RKYUjIFSkoKpNrOKryOjupKjrpmug1EKUlCUFLwFOpnM4FKZHuo+iBgoMwiNqGNSDRiEsGCw4lsANKXTLXXL3RDQ5ykZTqcxVMyqapKQEIVyUlSwlSPapQz4IpGhYYRNH0DGYLGoBhEkRiG53fJ2YqlcqVaq1LTM-RmSmQtwqIoedTveGBREDAXhUYi4SoAhQVBwcSrZgbBIAEUOnFmAFUALIungCK4y0nyhC1Fr-XjqZTuLymeo2RDmXSkXRaVxKXi8MyfaFKPlmoYW4Xja22+2wR1rPYAeRYGylWWDtzyoAKvzML3BWdUCmc5l4TMTCENz30ec+kYMjn0BZCRdRUVLNrtDpwUFIAHcsCs1mxXe7Pb7-Y2SS2yWGPBofv2vrVPprLMO3C1nDPvGVM+5dMb+vOUUKS6kGWq6VuuW6oDcqxsKgUAAK5YtMzosB6HDen6Zyns2cptkCXRUpCzhptG0ZGsy-xqN0P6GM01Q6PmJr8gugHoiBFZVhBUFQDB8GIXgzAsDWAAKHoHoksyoehJ6BsS2GtnIiD0i03wuD05hFO+T6NE8LQqO+n6eLozgmAEJrYAQEBwDITEokGOTnqGAC0ALDs5r6dPSUb0q4JmMYWAEUCWdmyvJBTdBqfytG4HheD4-h+f+gqWmAwUhrhI5mJ2WgQnRfztD8zLmKm6Y5pGZgfERKhzsiSUlhMUwzPMizLOuqUOel2i8KQ2XfNCeXuI4zK-JSPg5nqMJpga1Xmou6KYksbU4QpCCdd12i9Xo-wDRqPwlG0WrsoOOa-qaiXFkBbFrqsi2hUmzRrTlfVbQVw7KPoVLpnqUIMm+DF-jV52sSu7HgduXE3ReKjlQ9G39S92lKJ2hm8M44L9qog7TcxyXAcDV0bpukG7jxCELHgEOhr4IKPP8tSmPoHjOMybidm+mqvDo46mFjAEAGY4JgsAABaQBT6WVMyMKDlF7RvW+P4MQEQA */
     predictableActionArguments: true,
     id: 'brainstorm',
     initial: "inactive",
@@ -93,8 +93,7 @@ export const brainstormMachine = createMachine({
                     on: {
                         SEND_ARGUMENT: {
                             actions: 'sendArgument',
-                            target: "progressing",
-                            internal: true
+                            target: ".writingArgument"
                         },
                         VOTE: {
                             actions: "sendVote",

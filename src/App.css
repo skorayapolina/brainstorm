@@ -1,0 +1,93 @@
+:root {
+    --color-button-like: #D9BDE5;
+    --color-button-dislike: #A3E7FC;
+    --color-button-play: #94f1c1;
+
+    --color-1: #B3A7B8;
+    --color-2: #96AFB8;
+
+    --font-size-title: 36px;
+    --font-size-list: 20px;
+}
+
+body {
+    background-color: #f8f8f8;
+}
+
+.app {
+    display: grid;
+    grid-template-rows: auto 1fr;
+    padding: 0 5vw;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+}
+
+.title {
+    font-size: var(--font-size-title);
+    margin-right: 80px;
+}
+
+.time {
+    margin-right: 8px;
+    font-size: var(--font-size-title);
+}
+
+/* arguments */
+
+.arguments {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+.arguments-item {
+    font-size: var(--font-size-list);
+}
+
+.vote-controls {
+    display: flex;
+    gap: 8px;
+}
+
+/* buttons */
+
+.button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    transition: 0.3s opacity;
+}
+
+.button:hover {
+    opacity: 0.8;
+}
+
+.button-vote {
+    width: 30px;
+    height: 30px;
+}
+
+.button--like {
+    background-color: var(--color-button-like);
+}
+
+.button--dislike {
+    background-color: var(--color-button-dislike);
+}
+
+.button--play {
+    background-color: var(--color-button-play);
+}
+
+.button-send-argument {
+    background-color: var(--color-button-play);
+}
+
+.icon--dislike {
+    transform: rotate(180deg);
+}

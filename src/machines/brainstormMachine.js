@@ -1,11 +1,13 @@
-import { assign, createMachine, raise } from 'xstate';
+import {assign, createMachine} from 'xstate';
 import { v4 as uuidv4 } from 'uuid';
 import {getRandomArguments, getRandomVotes} from '../helpers/generators';
 
+let areEventsReceived = false;
+let eventsShelf = [];
 const existingArgsIds = [];
 
 export const brainstormMachine = createMachine({
-    /** @xstate-layout N4IgpgJg5mDOIC5QCMBOBDAlgO1gFwHtUBbAOh3QGM9MA3MAYgGUAVAQQCUWBtABgF1EoAA4FYmGgWxCQAD0QBGAKwBmUgCZeKheoDsChSt0AWY4YA0IAJ6IVSgJyl76+7u0LeqpbwUBfX5ZoWLiEJKRUNPQMAGIAkgBysUwAEnyCSCCi4pLSGfIIOuoAbKTaRca6RbzGSuouRZY2CEW6jlX2KgAcneqqCvpF-oEYOPhEZBF0jABqAPIsAKJpMlkSmFIy+ZW8pLydxrzq+8YunTqNiGekxva39kpF9t3V6n4BIEGjoRPUU8wL8QAIgB9TgAcQAqgBZAE8AQrMRrDZ5WyeXbadQHMqeR4XBAqTHXPonXjlFy8ezGIYfEYhcbhX70UhgejYPCwMFgbBgDA0bBQBhggELDhsRagjiQmHxOHpESInKbRBHBSkDwdXRKPH6XSkToOFT2IpFXqU6mfOlhSZMmjEHkMFixADCAGllhlVoqUQgjrrbrUDkV9t59So8cZ9rt9soDZVKoN3haxlbGWBSLb7e75dl1rlQPlCiUyhUqjU6ka8UUVGp2oaHLcioYlObacmfpE08JUAQoKg4OJ+aQAO5YPkCtiAkHg6GwrOZBW5pUIXQUvUtfpKTr2AytLXWRBmJTXUkubT2Q4KVwt4Jthkd0hdnt92ADqDD1BrflsVBQACudrZf4WAlKVZ3hD0F2RfNEFcVU3E6AkjiUfQlFUPEyicPotxcWpiWvL56WtTtu17fscDfIcPzHb8-wAvBmBYWYAAVQUnBIwRAmcZTnT1F29FdHE6ddNS3Hd7nQ8onFJbQel6YwVFMfx3mwAgIDgGQk2+BEcyguREAAWgrfcEH0kpeHM8ylAUKtPC0Al8MtMgKFTbSkTzPSEBOCSdhOVx3E8OwfAc28iNcr1oJMiM8QUMxMJkzUUNMQ5gu+O8pmZVl2U5bleXIsK+Ii3htWqUoDSNE0HCpRNW1Soj00wO1UHy3T8m0HYtB0LFrJxexKz2UqOnK00quGG9atTB8SOfV9mvc-IlBuUhyhPCoG2MBpjPLIkZP2atDX1XQUsIibH1Il9yOHUc8ognS5sQBxdWWk1VqNdbw14XVZPuTcjHkvQjpTe9Tumi7KM-KAaP-Lk8Fmpc-LVZa3ApBS9mMcMFE6Y8qxOBTXgeQ7qrG+kADMcEwWAAAtIFh70Wjxb69QNTpKmKYM3n8IA */
+    /** @xstate-layout N4IgpgJg5mDOIC5QCMBOBDAlgO1gFwHtUBbAOh3QGM9MA3MAYgGUAVAQQCUWBtABgF1EoAA4FYmGgWxCQAD0QBGAKwBmUgCZeKhQoBsATl779K9QBYANCACeifbrUB2ABxLdS9YbMLHPgL5+VmhYuIQkpFQ09AwAYgCSAHJxTAASfIJIIKLiktKZ8gj6LqSOvAYquo5KzmaGKla2hfrqGq667fYKZuouAUEYOPhEZJF0YKRg9Nh4sADiYNhgGDTYUAwcAKIAwhtxAGobAPobBwksTOky2RKYUjIFSkoKpNrOKryOjupKjrpmug1EKUlCUFLwFOpnM4FKZHuo+iBgoMwiNqGNSDRiEsGCw4lsANKXTLXXL3RDQ5ykZTqcxVMyqapKQEIVyUlSwlSPapQz4IpGhYYRNH0DGYLGoBhEkRiG53fJ2YqlcqVaq1LTM-RmSmQtwqIoedTveGBREDAXhUYi4SoAhQVBwcSrZgbBIAEUOnFmAFUALIungCK4y0nyhC1Fr-XjqZTuLymeo2RDmXSkXRaVxKXi8MyfaFKPlmoYW4Xja22+2wR1rPYAeRYGylWWDtzyoAKvzML3BWdUCmc5l4TMTCENz30ec+kYMjn0BZCRdRUVLNrtDpwUFIAHcsCs1mxXe7Pb7-Y2SS2yWGPBofv2vrVPprLMO3C1nDPvGVM+5dMb+vOUUKS6kGWq6VuuW6oDcqxsKgUAAK5YtMzosB6HDen6Zyns2cptkCXRUpCzhptG0ZGsy-xqN0P6GM01Q6PmJr8gugHoiBFZVhBUFQDB8GIXgzAsDWAAKHoHoksyoehJ6BsS2GtnIiD0i03wuD05hFO+T6NE8LQqO+n6eLozgmAEJrYAQEBwDITEokGOTnqGAC0ALPim47KI4FRlAo+h9o4c7IoKFAlnZsryQU3Qan8rRuB4Xg+P4jGFgBlpgKFIa4SOZidloEJ0X87Q-MyXSdlqHmPOy2W1AF5qLuikwLDM8yLMs67pQ5mXaLwpC5d80IFe4jjMr8lI+DmeowmmBo1cxqWiuK7U4QpCBdT12h9Xo-yDRqPwlG0WrsoOOa-qa-6CnNbFrqsi3hUmzRrXl-VbUVw56SCzQ-lCxgZjUDF-oFxZAZdYGrFuO5tbJ9lLQUKhmN1vX5c9Q3PkonaGbwzjgv2qiDjNKUlsBK7seBm6QbuPEIY1N0Xr4IKPP8tSmPoHjOMybidm+mqvDo46mHjgoAGY4JgsAABaQNToaVMV7wgjq7TKOOvzfKZfhAA */
     predictableActionArguments: true,
     id: 'brainstorm',
     initial: "inactive",
@@ -15,6 +17,7 @@ export const brainstormMachine = createMachine({
         newPro: '',
         newCon: '',
         timer: 300000,
+        intervals: [],
     },
     states: {
         inactive: {
@@ -24,18 +27,15 @@ export const brainstormMachine = createMachine({
         },
         active: {
             type: 'parallel',
+            exit: 'stopEventsGeneration',
             states: {
                 eventsGenerating: {
+                    entry: 'generateEvents',
                     invoke: {
                         src: () => (callback) => {
                             const interval = setInterval(() => {
-                                callback('GENERATE_ARGUMENTS');
-
-                                // setTimeout(() => {
-                                //     console.log('getg sfse')
-                                //     cb('GENERATE_VOTES');
-                                // }, 200);
-                            }, 1200);
+                                callback('RECEIVE_EVENTS');
+                            }, 1000);
 
                             return () => {
                                 clearInterval(interval);
@@ -43,31 +43,11 @@ export const brainstormMachine = createMachine({
                         }
                     },
                     on: {
-                        GENERATE_ARGUMENTS: {
-                            actions: raise(() => {
-                                console.log('raise receive args');
-
-                                return ({
-                                    type: 'RECEIVE_ARGUMENTS',
-                                    data: {
-                                        arguments: getRandomArguments()
-                                    }
-                                });
-                            }),
+                        RECEIVE_EVENTS: {
+                            target: 'eventsGenerating',
+                            actions: 'receiveEvents'
                         },
-                        GENERATE_VOTES: {
-                            actions: raise(() => {
-                                console.log('raise receive votes');
-                                return (
-                                    {
-                                        type: 'RECEIVE_VOTES',
-                                        data: {
-                                            votes: getRandomVotes(existingArgsIds)
-                                        }
-                                    });
-                            }),
-                        },
-                    }
+                    },
                 },
                 timer: {
                     always: {
@@ -109,39 +89,27 @@ export const brainstormMachine = createMachine({
                                 STOP_ADDING_ARGUMENT: 'waiting',
                             },
                         }
+                    },
+                    on: {
+                        SEND_ARGUMENT: {
+                            actions: 'sendArgument',
+                            target: "progressing",
+                            internal: true
+                        },
+                        VOTE: {
+                            actions: "sendVote",
+                            target: "progressing",
+                            internal: true
+                        }
                     }
                 },
             },
             on: {
                 FINISH: "finished",
-                VOTE: {
-                    actions: "sendVote",
-                    target: "active",
-                    internal: true
-                },
-                SEND_ARGUMENT: {
-                    actions: 'sendArgument',
-                    target: "#brainstorm.active.progressing",
-                    // cond: (context, event) => {
-                    //     if (event.data.type === 'pros') {
-                    //         return !!context.newPro;
-                    //     }
-
-                    //     return !!context.newCon;
-                    // },
-                },
-                RECEIVE_ARGUMENTS: {
-                    actions: 'receiveArguments',
-                    target: "#brainstorm.active.progressing",
-                },
-                RECEIVE_VOTES: {
-                    actions: 'receiveVotes',
-                    target: "#brainstorm.active.progressing",
-                },
             }
         },
         finished: {
-            type: "final"
+            type: "final",
         }
     },
 }, {
@@ -171,6 +139,7 @@ export const brainstormMachine = createMachine({
                     likes: 0,
                     dislikes: 0,
                 }
+
                 existingArgsIds.push(newArg.id);
 
                 return {
@@ -181,32 +150,74 @@ export const brainstormMachine = createMachine({
                 };
             }),
             setArgument: assign((context, event) => event.data),
-            receiveVotes: assign((context, event) => {
-                console.log(event.data.votes);
-                event.data.votes.forEach(vote => {
-                    const newArgs = context.arguments.map(arg => {
-                        if (arg.id === vote.argId) {
-                            return {
-                                ...arg,
-                                ...(vote.type === 'like'
-                                    ? ({likes: arg.likes + 1})
-                                    : ({dislikes: arg.dislikes + 1}))
-                            }
+            generateEvents: (context) => {
+                if (areEventsReceived) {
+                    eventsShelf = [];
+                }
+
+                if (!!context.intervals.length) {
+                    return;
+                }
+
+                // const argsInterval = setInterval(() => {
+                //     areEventsReceived = false;
+                //     eventsShelf.push(...getRandomArguments());
+                // }, 1200);
+                //
+                // const votesInterval = setInterval(() => {
+                //     if (existingArgsIds.length > 0) {
+                //         areEventsReceived = false;
+                //         eventsShelf.push(...getRandomVotes(existingArgsIds));
+                //     }
+                // }, 1000);
+
+                // context.intervals.push(argsInterval, votesInterval)
+            },
+            receiveEvents: assign((context) => {
+                const [argumentsEvents, votesEvents] = eventsShelf.reduce(([argumentsEvents, votesEvents], event) => {
+                    if (event.eventType === 'votes') {
+                        votesEvents.push(event);
+                    } else {
+                        argumentsEvents.push(event);
+                    }
+
+                    return [argumentsEvents, votesEvents];
+                }, [[], []]);
+
+                const [newArguments, newArgumentsIds] = argumentsEvents.reduce(([newArguments, newArgumentsIds], argEvent) => {
+                    newArguments.push(argEvent.argument);
+                    newArgumentsIds.push(argEvent.argument.id);
+
+                    return [newArguments, newArgumentsIds]
+                }, [[], []]);
+
+                const argumentsWithVotes = context.arguments.map(arg => {
+                    const votes = votesEvents.find(vote => vote.id === arg.id);
+
+                    if (votes) {
+                        return {
+                            ...arg,
+                            likes: arg.likes + votes.likes,
+                            dislikes: arg.dislikes + votes.dislikes,
                         }
+                    }
 
-                        return arg;
-                    });
-
-                    return {
-                        arguments: newArgs,
-                    };
+                    return arg;
                 })
-            }),
-            receiveArguments: assign((context, event) => {
+
+                areEventsReceived = true;
+                existingArgsIds.push(...newArgumentsIds);
+
                 return {
-                    arguments: [...context.arguments, ...event.data.arguments],
+                    arguments: [...argumentsWithVotes, ...newArguments],
                 };
-            })
+            }),
+            stopEventsGeneration: (context) => {
+                console.log('stop');
+                // context.intervals.forEach((intId) => {
+                //     clearInterval(intId);
+                // })
+            }
         }
     }
 );

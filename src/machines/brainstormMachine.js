@@ -158,19 +158,19 @@ export const brainstormMachine = createMachine({
                     return;
                 }
 
-                // const argsInterval = setInterval(() => {
-                //     areEventsReceived = false;
-                //     eventsShelf.push(...getRandomArguments());
-                // }, 1200);
-                //
-                // const votesInterval = setInterval(() => {
-                //     if (existingArgsIds.length > 0) {
-                //         areEventsReceived = false;
-                //         eventsShelf.push(...getRandomVotes(existingArgsIds));
-                //     }
-                // }, 1000);
+                const argsInterval = setInterval(() => {
+                    areEventsReceived = false;
+                    eventsShelf.push(...getRandomArguments());
+                }, 12000);
 
-                // context.intervals.push(argsInterval, votesInterval)
+                const votesInterval = setInterval(() => {
+                    if (existingArgsIds.length > 0) {
+                        areEventsReceived = false;
+                        eventsShelf.push(...getRandomVotes(existingArgsIds));
+                    }
+                }, 1000);
+
+                context.intervals.push(argsInterval, votesInterval)
             },
             receiveEvents: assign((context) => {
                 const [argumentsEvents, votesEvents] = eventsShelf.reduce(([argumentsEvents, votesEvents], event) => {
@@ -212,10 +212,9 @@ export const brainstormMachine = createMachine({
                 };
             }),
             stopEventsGeneration: (context) => {
-                console.log('stop');
-                // context.intervals.forEach((intId) => {
-                //     clearInterval(intId);
-                // })
+                context.intervals.forEach((intId) => {
+                    clearInterval(intId);
+                })
             }
         }
     }

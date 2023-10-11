@@ -16,11 +16,33 @@ export const getRandomArguments = () => (
     }]
 )
 
-export const getRandomVotes = (argsIds) => {
-  const argsNumber = argsIds.length;
-  const votesNumber = Math.floor(34 / argsNumber);
+const getTotalVotesNumber = (argIdsNumber) => {
+  if (argIdsNumber >= 18) {
+    return 34;
+  }
 
-  const votes = argsIds.map((id) => {
+  if (argIdsNumber >= 8) {
+    return 44;
+  }
+
+  if (argIdsNumber >= 5) {
+    return 52;
+  }
+
+  return 5;
+}
+
+export const getRandomVotes = (argsIds) => {
+  const randomArgIds = faker.helpers.arrayElements(argsIds, {
+    min: 1,
+    max: argsIds.length * 0.8 > 1 ? Math.ceil(argsIds.length * 0.8) : 1
+  });
+  let totalVotesNumber = getTotalVotesNumber(argsIds.length);
+
+  const argsNumber = randomArgIds.length;
+  const votesNumber = Math.floor(totalVotesNumber / argsNumber);
+
+  const votes = randomArgIds.map((id) => {
     const likes = votesNumber >= 2
         ? faker.helpers.rangeToNumber({ min: 1, max: votesNumber})
         : faker.helpers.arrayElement([0, 1]);

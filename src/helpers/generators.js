@@ -35,7 +35,7 @@ const getTotalVotesNumber = (argIdsNumber) => {
 export const getRandomVotes = (argsIds) => {
   const randomArgIds = faker.helpers.arrayElements(argsIds, {
     min: 1,
-    max: argsIds.length * 0.8 > 1 ? Math.ceil(argsIds.length * 0.8) : 1
+    max: argsIds.length * 0.6 > 1 ? Math.ceil(argsIds.length * 0.6) : 1
   });
   let totalVotesNumber = getTotalVotesNumber(argsIds.length);
 

@@ -1,0 +1,43 @@
+.arguments-list {
+    overflow: scroll;
+    margin: 0;
+    padding-bottom: 16px;
+}
+
+.arguments-item {
+    margin-right: 40px;
+    font-size: var(--font-size-list);
+}
+
+.arguments-item:not(:last-child) {
+    margin-bottom: 16px;
+}
+
+.votes {
+    display: flex;
+}
+
+.votes-value {
+    font-size: 18px;
+    align-self: flex-end;
+    margin-right: auto;
+}
+
+.vote-controls {
+    display: flex;
+    gap: 10px;
+}
+
+.scale {
+    height: 4px;
+    width: 100%;
+    margin: 8px 0;
+}
+
+.scaleValue {
+    height: 100%;
+    border-radius: 2px;
+    background-color: var(--color-blue-dim);
+    transition: width 0.2s;
+    width: 0;
+}

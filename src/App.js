@@ -1,90 +1,11 @@
-import { useCallback, useMemo } from 'react';
+import { useMemo } from 'react';
 import { useMachine } from '@xstate/react';
 import { brainstormMachine } from './machines/brainstormMachine';
-import { getTime } from './helpers/helpers';
-import { ReactComponent as LikeIcon } from './icons/like.svg';
+import { ArgumentField } from './components/ArgumentField/ArgumentField';
+import {ArgumentsList} from './components/ArgumentsList/ArgumentsList';
+import { getTime } from './helpers/time';
 import { ReactComponent as PlayIcon } from './icons/triangle.svg';
-import { ReactComponent as SendIcon } from './icons/send.svg';
 import './App.css';
-
-function ArgumentsList({
-    args,
-    onVoteClick,
-}) {
-    return (
-        <ul className="arguments-list">
-            {args.map((arg) => (
-                <li key={arg.id} className="arguments-item">
-                    <div>{arg.value}</div>
-                    <div className="votes">
-                        <div className="votes-value">{arg.likes} / - {arg.dislikes}</div>
-                        <div className="vote-controls">
-                            <button
-                                className='button button-vote button--dislike'
-                                onClick={() => onVoteClick({
-                                    argId: arg.id,
-                                    type: 'dislike'
-                                })}
-                            >
-                                <LikeIcon className="icon--dislike" />
-                            </button>
-                            <button
-                                className='button button-vote button--like'
-                                onClick={() => onVoteClick({
-                                    argId: arg.id,
-                                    type: 'like'
-                                })}
-                            >
-                                <LikeIcon />
-                            </button>
-                        </div>
-                    </div>
-                </li>
-            ))}
-        </ul>
-    );
-}
-
-function ArgumentField({
-    onFocus,
-    onBlur,
-    onChange,
-    onClick,
-    value,
-    isSendShown,
-    placeholder,
-}) {
-    const onKeyDown = useCallback((event) => {
-        if (event.which === 13 && !event.shiftKey) {
-            if (!event.repeat) {
-                onClick();
-                event.preventDefault();
-            }
-        }
-    }, [onClick]);
-
-    return (
-        <form className="field-form">
-            <textarea
-                onKeyDown={onKeyDown}
-                onFocus={onFocus}
-                onBlur={onBlur}
-                onChange={onChange}
-                value={value}
-                className="field-textarea"
-                placeholder={placeholder}
-            />
-            {isSendShown && (
-                <button
-                    className="button button-send-argument"
-                    onClick={onClick}
-                >
-                    <SendIcon />
-                </button>
-            )}
-        </form>
-    );
-}
 
 function App() {
     const [state, send] = useMachine(brainstormMachine);
@@ -101,7 +22,11 @@ function App() {
                 return acc;
             }, { pros: [], cons: [] })
         )
-    }, [state.context.arguments])
+    }, [state.context.arguments]);
+
+    // todo: replace with optimal algorithm
+    const maxProsLikesValue = Math.max(...args.pros.map(pro => pro.likes));
+    const maxConsLikesValue = Math.max(...args.cons.map(pro => pro.likes));
 
     return (
         <div className="app">
@@ -127,7 +52,7 @@ function App() {
                 <div className="arguments">
                     {Object.entries(args).map(([key, args], index) => (
                         <ArgumentsList
-                            key={index}
+                            key={key}
                             args={args}
                             onVoteClick={(data) => (
                                 send({
@@ -135,6 +60,8 @@ function App() {
                                     data,
                                 })
                             )}
+                            maxLikesValue={key === 'pros' ? maxProsLikesValue : maxConsLikesValue}
+                            isVoteControlsShown={state.matches('active')}
                         />
                     ))}
                 </div>

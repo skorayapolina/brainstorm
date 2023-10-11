@@ -86,69 +86,7 @@ body {
     margin: 0;
 }
 
-.arguments-list {
-    overflow: scroll;
-    margin: 0;
-    padding-bottom: 16px;
-}
-
-.arguments-item {
-    margin-right: 40px;
-    font-size: var(--font-size-list);
-}
-
-.arguments-item:not(:last-child) {
-    margin-bottom: 16px;
-}
-
-.votes {
-    display: flex;
-}
-
-.votes-value {
-    font-size: 18px;
-    align-self: flex-end;
-    margin-right: auto;
-}
-
-.vote-controls {
-    display: flex;
-    gap: 10px;
-}
-
-/* field */
-
-.field-form {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background-color: rgba(var(--color-blue-dim-rgb) / 0.3);
-    border-radius: 10px;
-    padding: 10px;
-    transition: box-shadow 0.2s;
-}
-
-.field-form:focus-within {
-    box-shadow: inset 0 0 0 2px var(--color-blue-dim);
-}
-
-.field-textarea {
-    width: calc(100% - 40px);
-    height: 100%;
-    background-color: transparent;
-    border: none;
-    margin: 0;
-    padding: 0;
-    resize: none;
-    font-size: var(--font-size-text-area);
-    line-height: 1.1;
-}
-
-.field-textarea:focus {
-    outline: none;
-}
-
-/* buttons */
+/* button */
 
 .button {
     display: inline-flex;

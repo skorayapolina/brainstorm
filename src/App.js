@@ -16,26 +16,28 @@ function ArgumentsList({
             {args.map((arg) => (
                 <li key={arg.id} className="arguments-item">
                     <div>{arg.value}</div>
-                    <div>{arg.likes} / - {arg.dislikes}</div>
-                    <div className="vote-controls">
-                        <button
-                            className='button button-vote button--like'
-                            onClick={() => onVoteClick({
-                                argId: arg.id,
-                                type: 'like'
-                            })}
-                        >
-                            <LikeIcon />
-                        </button>
-                        <button
-                            className='button button-vote button--dislike'
-                            onClick={() => onVoteClick({
-                                argId: arg.id,
-                                type: 'dislike'
-                            })}
-                        >
-                            <LikeIcon className="icon--dislike" />
-                        </button>
+                    <div className="votes">
+                        <div className="votes-value">{arg.likes} / - {arg.dislikes}</div>
+                        <div className="vote-controls">
+                            <button
+                                className='button button-vote button--dislike'
+                                onClick={() => onVoteClick({
+                                    argId: arg.id,
+                                    type: 'dislike'
+                                })}
+                            >
+                                <LikeIcon className="icon--dislike" />
+                            </button>
+                            <button
+                                className='button button-vote button--like'
+                                onClick={() => onVoteClick({
+                                    argId: arg.id,
+                                    type: 'like'
+                                })}
+                            >
+                                <LikeIcon />
+                            </button>
+                        </div>
                     </div>
                 </li>
             ))}
@@ -61,13 +63,15 @@ function ArgumentField({
     }, [onClick]);
 
     return (
-        <div>
+        <form className="field-form">
             <textarea
                 onKeyDown={onKeyDown}
                 onFocus={onFocus}
                 onBlur={onBlur}
                 onChange={onChange}
                 value={value}
+                className="field-textarea"
+                placeholder="New argument"
             />
             {isSendShown && (
                 <button
@@ -77,7 +81,7 @@ function ArgumentField({
                     <SendIcon />
                 </button>
             )}
-        </div>
+        </form>
     );
 }
 
@@ -86,47 +90,50 @@ function App() {
 
     const args = useMemo(() => {
         return (
-            state.context.arguments.reduce(([pros, cons], arg) => {
+            state.context.arguments.reduce((acc, arg) => {
                 if (arg.type === 'pros') {
-                    pros.push(arg);
+                    acc.pros.push(arg);
                 } else {
-                    cons.push(arg)
+                    acc.cons.push(arg)
                 }
 
-                return [pros, cons]
-            }, [[], []])
+                return acc;
+            }, { pros: [], cons: [] })
         )
     }, [state.context.arguments])
 
     return (
         <div className="app">
             <header className="header">
-                <h1 className="title">Pros and Cons Brainstorm</h1>
-                <div className="time">
-                    {getTime(state.context.timer)}
-                </div>
+                <h1 className="title">Topic: TypeScript Pros and Cons</h1>
                 {state.matches('inactive') && (
                     <button
-                    className="button button--play"
+                        className="button button--play"
                         onClick={() => send('START')}
                     >
                         <PlayIcon className="icon--play"/>
                     </button>
                 )}
+                <div className="time">
+                    {getTime(state.context.timer)}
+                </div>
             </header>
-            <main className="main">
+            <main className={`main ${state.matches('finished') && 'main--state-finished'}`}>
                 <div className="arguments">
-                    {args.map((args, index) => (
-                        <ArgumentsList
-                            key={index}
-                            args={args}
-                            onVoteClick={(data) => (
-                                send({
-                                    type: 'VOTE',
-                                    data,
-                                })
-                            )}
-                        />
+                    {Object.entries(args).map(([key, args], index) => (
+                        <div>
+                            <h2 className="arguments-list-title">{key === 'pros' ? 'Pros:' : 'Cons:'}</h2>
+                            <ArgumentsList
+                                key={index}
+                                args={args}
+                                onVoteClick={(data) => (
+                                    send({
+                                        type: 'VOTE',
+                                        data,
+                                    })
+                                )}
+                            />
+                        </div>
                     ))}
                 </div>
                 {state.matches('active') && (

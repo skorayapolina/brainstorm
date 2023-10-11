@@ -43,9 +43,9 @@ body {
 .main {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    grid-template-rows: auto 80px;
+    grid-template-rows: min-content auto 80px;
     grid-column-gap: 10px;
-    grid-row-gap: 26px;
+    grid-row-gap: 16px;
     padding-bottom: 40px;
     overflow: hidden;
 }
@@ -56,12 +56,19 @@ body {
 
 /* arguments */
 
+.arguments-header {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    grid-column: 1 / span 2;
+}
+
 .arguments {
     position: relative;
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 8px;
-    grid-area: 1 / span 2;
+    grid-column: 1 / span 2;
     overflow: hidden;
 }
 
@@ -76,13 +83,12 @@ body {
 }
 
 .arguments-list-title {
-    margin: 10px;
+    margin: 0;
 }
 
 .arguments-list {
     overflow: scroll;
     margin: 0;
-    padding-top: 16px;
     padding-bottom: 16px;
 }
 

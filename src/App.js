@@ -52,6 +52,7 @@ function ArgumentField({
     onClick,
     value,
     isSendShown,
+    placeholder,
 }) {
     const onKeyDown = useCallback((event) => {
         if (event.which === 13 && !event.shiftKey) {
@@ -71,7 +72,7 @@ function ArgumentField({
                 onChange={onChange}
                 value={value}
                 className="field-textarea"
-                placeholder="New argument"
+                placeholder={placeholder}
             />
             {isSendShown && (
                 <button
@@ -119,21 +120,22 @@ function App() {
                 </div>
             </header>
             <main className={`main ${state.matches('finished') && 'main--state-finished'}`}>
+                <div className="arguments-header">
+                    <h2 className="arguments-list-title">Pros:</h2>
+                    <h2 className="arguments-list-title">Cons:</h2>
+                </div>
                 <div className="arguments">
                     {Object.entries(args).map(([key, args], index) => (
-                        <div>
-                            <h2 className="arguments-list-title">{key === 'pros' ? 'Pros:' : 'Cons:'}</h2>
-                            <ArgumentsList
-                                key={index}
-                                args={args}
-                                onVoteClick={(data) => (
-                                    send({
-                                        type: 'VOTE',
-                                        data,
-                                    })
-                                )}
-                            />
-                        </div>
+                        <ArgumentsList
+                            key={index}
+                            args={args}
+                            onVoteClick={(data) => (
+                                send({
+                                    type: 'VOTE',
+                                    data,
+                                })
+                            )}
+                        />
                     ))}
                 </div>
                 {state.matches('active') && (
@@ -153,6 +155,7 @@ function App() {
                             )}
                             value={state.context.newPro}
                             isSendShown={!!state.context.newPro}
+                            placeholder="New Pro"
                         />
                         <ArgumentField
                             onFocus={() => send('ADD_ARGUMENT')}
@@ -169,6 +172,7 @@ function App() {
                             )}
                             value={state.context.newCon}
                             isSendShown={!!state.context.newCon}
+                            placeholder="New Con"
                         />
                     </>
                 )}

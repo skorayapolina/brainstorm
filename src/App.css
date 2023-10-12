@@ -51,7 +51,7 @@ body {
 }
 
 .main--state-finished {
-    grid-template-rows: unset;
+    grid-template-rows:  min-content auto;
 }
 
 /* arguments */

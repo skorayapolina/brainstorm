@@ -12,7 +12,6 @@ export const brainstormMachine = createMachine({
     id: 'brainstorm',
     initial: "inactive",
     context: {
-        numberOfParticipants: 1000,
         arguments: [],
         newPro: '',
         newCon: '',
@@ -27,7 +26,7 @@ export const brainstormMachine = createMachine({
         },
         active: {
             type: 'parallel',
-            exit: 'stopEventsGeneration',
+            exit: ['stopEventsGeneration', 'sortArguments'],
             states: {
                 eventsGenerating: {
                     entry: 'generateEvents',
@@ -210,6 +209,13 @@ export const brainstormMachine = createMachine({
                 return {
                     arguments: [...argumentsWithVotes, ...newArguments],
                 };
+            }),
+            sortArguments: assign((context) => {
+                const sortedArguments = context.arguments.slice().sort((arg1, arg2) => arg2.likes - arg1.likes);
+
+                return {
+                    arguments: sortedArguments,
+                }
             }),
             stopEventsGeneration: (context) => {
                 context.intervals.forEach((intId) => {
